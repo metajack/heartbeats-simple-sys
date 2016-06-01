@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#if !defined(_WIN32)
 #include <unistd.h>
+#else
+#include <windows.h>
+#endif
 #include "heartbeat-pow.h"
 
 #define UNUSED(x) (void)(x)
@@ -80,7 +84,11 @@ int main(void) {
   for(i = 0; i < iterations; i++) {
     start_time = get_time();
     start_energy = get_energy();
+#if defined(_WIN32)
+    Sleep(1);
+#else
     usleep(1000);
+#endif
     end_time = get_time();
     end_energy = get_energy();
     heartbeat_pow(&hb, i, 1, start_time, end_time, start_energy, end_energy);
@@ -92,7 +100,11 @@ int main(void) {
   for(i = 0; i < iterations; i++) {
     start_time = end_time;
     start_energy = end_energy;
+#if defined(_WIN32)
+    Sleep(1);
+#else
     usleep(1000);
+#endif
     end_time = get_time();
     end_energy = get_energy();
     heartbeat_pow(&hb, i, 1, start_time, end_time, start_energy, end_energy);

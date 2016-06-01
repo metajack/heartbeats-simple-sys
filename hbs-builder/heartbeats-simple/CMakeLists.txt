@@ -3,9 +3,13 @@ cmake_minimum_required(VERSION 2.8.9)
 project(heartbeats-simple)
 set(PROJECT_VERSION 0.2.2)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas -Wextra -pedantic -pedantic-errors -std=gnu99")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+if(NOT WIN32 OR MINGW)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unknown-pragmas -Wextra -pedantic -pedantic-errors -std=gnu99")
+endif()
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+set(DUMMY ${CMAKE_BUILD_TYPE})
 
 # Build shared objects by default
 if(NOT DEFINED BUILD_SHARED_LIBS)

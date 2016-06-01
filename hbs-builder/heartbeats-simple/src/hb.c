@@ -9,7 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if !defined(_WIN32)
 #include <unistd.h>
+#else
+#include <windows.h>
+#endif
 
 /* Determine which heartbeat implementation to use */
 #if defined(HEARTBEAT_MODE_ACC)
@@ -263,8 +267,11 @@ void heartbeat(heartbeat_context* hb,
     errno = EINVAL;
     return;
   }
-
+#if defined(_WIN32)
+  while (InterlockedExchangePointer(&hb->lock, 1)) {
+#else
   while (__sync_lock_test_and_set(&hb->lock, 1)) {
+#endif
     while (hb->lock);
   }
 
@@ -341,5 +348,9 @@ void heartbeat(heartbeat_context* hb,
     hb->ws.buffer_index = 0;
   }
 
+#if defined(_WIN32)
+  InterlockedExchange(&hb->lock, 0);
+#else
   __sync_lock_release(&hb->lock);
+#endif
 }
